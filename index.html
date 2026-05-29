@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia Pesona NTT - Sleek Edition</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050508;
+            --gold: #FFD700;
+            --gold-glow: rgba(255, 215, 0, 0.6);
+            --neon-blue: #00f2ff;
+            --neon-red: #ff2e63;
+            --btn-grad: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            --glass-card: rgba(7, 7, 10, 0.92);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, #131325 0%, #050508 100%);
+        }
+
+        /* --- 1. WELCOME SCREEN --- */
+        #welcome-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.85)), 
+                        url('https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&q=80&w=1400') center/cover;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            transition: 0.8s ease-in-out;
+        }
+
+        .title-gold {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.2rem, 8vw, 4rem);
+            color: var(--gold);
+            text-shadow: 0 0 30px var(--gold-glow);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .welcome-desc {
+            max-width: 600px;
+            font-size: 1.1rem;
+            color: #eeeeee;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .btn-start {
+            padding: 20px 50px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: black;
+            background: var(--gold);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 30px var(--gold-glow);
+            transition: 0.3s;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 0 50px var(--gold-glow); }
+        }
+
+        /* --- 2. HUD & MAP --- */
+        .status-bar { width: 90%; max-width: 500px; display: flex; justify-content: space-between; margin-bottom: 15px; z-index: 10; }
+        .heart { font-size: 1.8rem; color: var(--neon-red); text-shadow: 0 0 12px var(--neon-red); transition: 0.5s; display: inline-block; margin-right: 5px; }
+        .heart.lost { opacity: 0; transform: scale(0) translateY(-25px); }
+
+        .adventure-map {
+            width: 90%; max-width: 650px;
+            height: 85px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 45px;
+            margin-bottom: 30px;
+            position: relative;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 40px; border: 1px solid rgba(255,255,255,0.12);
+            backdrop-filter: blur(15px);
+        }
+
+        .map-line { position: absolute; top: 50%; left: 40px; right: 40px; height: 2px; background: rgba(255,255,255,0.08); z-index: 1; }
+        .waypoint { width: 14px; height: 14px; background: #333; border-radius: 50%; z-index: 2; position: relative; transition: 0.5s; }
+        .waypoint.active { background: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); }
+        .waypoint-label { position: absolute; top: 28px; left: 50%; transform: translateX(-50%); font-size: 9px; color: #aaa; white-space: nowrap; font-weight: bold; }
+
+        #player-icon {
+            position: absolute; width: 40px; height: 40px;
+            background: var(--gold); border-radius: 50%; z-index: 3;
+            top: 50%; left: 40px; transform: translate(-50%, -50%);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            box-shadow: 0 0 20px var(--gold); font-size: 1.4rem;
+        }
+
+        /* --- 3. CHALLENGE CARD (Sleek Update) --- */
+        .quiz-card {
+            background: var(--glass-card);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--gold);
+            border-radius: 30px;
+            padding: 30px; /* Padding lebih ramping */
+            text-align: center; 
+            width: 95%; 
+            max-width: 500px; /* Max-width lebih ringkas untuk laptop */
+            box-shadow: 0 0 35px rgba(255,215,0,0.22);
+            position: relative; 
+            z-index: 100;
+        }
+
+        #q-tag { font-family: 'Orbitron', sans-serif; color: var(--gold); letter-spacing: 4px; font-size: 0.8rem; margin-bottom: 12px; font-weight: bold; }
+        #question-text { font-size: 1.25rem; font-weight: 700; margin-bottom: 25px; line-height: 1.4; color: white; }
+
+        .option-btn {
+            background: var(--btn-grad);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 14px 20px; /* Padding lebih ramping */
+            border-radius: 15px; 
+            color: white; 
+            cursor: pointer;
+            font-size: 1rem; /* Ukuran font lebih proporsional */
+            font-weight: 600; 
+            transition: 0.3s; 
+            width: 100%; 
+            margin-bottom: 10px; /* Jarak antar tombol lebih rapat */
+        }
+
+        .option-btn:hover:not(:disabled):not(.wrong) { 
+            border-color: var(--gold); box-shadow: 0 0 20px var(--neon-blue); color: var(--gold); transform: translateY(-3px);
+        }
+
+        .correct { background: linear-gradient(135deg, #00b09b, #96c93d) !important; border-color: #00ff84 !important; box-shadow: 0 0 20px #00ff84; }
+        .wrong { background: linear-gradient(135deg, #cb2d3e, #ef473a) !important; border-color: #ff2e63 !important; animation: shake 0.4s; }
+
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
+
+        /* --- 4. RESULT SCOREBOARD --- */
+        #result-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 8, 0.97);
+            z-index: 9999; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+
+        .scoreboard {
+            background: var(--glass-card);
+            border: 3px solid var(--gold);
+            border-radius: 35px;
+            padding: 40px; width: 100%; max-width: 450px;
+            text-align: center; box-shadow: 0 0 50px var(--gold-glow);
+            animation: scoreIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; z-index: 10000;
+        }
+
+        @keyframes scoreIn { from {opacity:0; transform:scale(0.8) translateY(30px)} to {opacity:1; transform:scale(1) translateY(0)} }
+
+        .leaderboard { width: 100%; margin: 20px 0; border-collapse: collapse; }
+        .leaderboard td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; color: #ddd; }
+        .rank-icon { font-size: 1.2rem; margin-right: 10px; }
+
+        /* --- 5. AUDIO & CANVAS --- */
+        #mute-btn {
+            position: fixed; bottom: 20px; right: 20px; z-index: 10001;
+            background: rgba(255,255,255,0.1); border: 1px solid var(--gold);
+            color: var(--gold); width: 55px; height: 55px; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+
+        #fireworks { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5000; pointer-events: none; }
+        
+        #combo-popup { position: absolute; top: -60px; width: 100%; left: 0; text-align: center; color: var(--neon-blue); font-family: 'Orbitron'; font-size: 2rem; opacity: 0; pointer-events: none; transition: 0.4s; text-shadow: 0 0 15px var(--neon-blue); font-weight: bold; }
+        .show-combo { opacity: 1 !important; transform: translateY(-15px) scale(1.1); }
+
+    </style>
+</head>
+<body>
+
+    <!-- WELCOME SCREEN -->
+    <div id="welcome-screen">
+        <h1 class="title-gold">Petualangan Trivia<br>Pesona NTT</h1>
+        <p class="welcome-desc">Jelajahi keajaiban Flobamora. Uji pengetahuanmu, kumpulkan combo, dan jangan biarkan perahumu karam!</p>
+        <button class="btn-start" onclick="startAdventure()">MULAI PETUALANGAN</button>
+    </div>
+
+    <!-- MAIN GAME UI -->
+    <div id="game-ui" style="display: none; flex-direction: column; align-items: center; width: 100%;">
+        <div class="status-bar">
+            <div id="hearts-container">
+                <span class="heart">❤️</span><span class="heart">❤️</span><span class="heart">❤️</span>
+            </div>
+            <div id="score-display" style="font-family: 'Orbitron'; color: var(--gold); font-size: 1.2rem;">SCORE: 0</div>
+        </div>
+
+        <div class="adventure-map">
+            <div class="map-line"></div>
+            <div id="player-icon">⛵</div>
+            <div class="waypoint active"><span class="waypoint-label">KUPANG</span></div>
+            <div class="waypoint"><span class="waypoint-label">ALOR</span></div>
+            <div class="waypoint"><span class="waypoint-label">ENDE</span></div>
+            <div class="waypoint"><span class="waypoint-label">FLORES</span></div>
+            <div class="waypoint"><span class="waypoint-label">L. BAJO</span></div>
+        </div>
+
+        <div class="quiz-card">
+            <div id="combo-popup">COMBO X2</div>
+            <div id="q-tag">CHALLENGE 1</div>
+            <p id="question-text">Memuat pertanyaan...</p>
+            <div id="options-container"></div>
+        </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen">
+        <div class="scoreboard">
+            <h2 id="result-title" style="color: var(--gold); font-family: 'Orbitron'; margin-bottom: 5px; font-size: 1.8rem;">MISSION CLEAR!</h2>
+            <p id="result-desc" style="font-size: 0.9rem; color: #ccc;">Kamu adalah Penjelajah Agung NTT!</p>
+            
+            <div style="font-size: 3rem; font-weight: 800; margin: 20px 0; color: var(--neon-blue); text-shadow: 0 0 15px rgba(0,242,255,0.4);" id="final-score">0</div>
+            
+            <p style="font-size: 0.75rem; letter-spacing: 3px; color: var(--gold); font-weight: bold; margin-bottom: 8px;">TOP EXPLORERS</p>
+            <table class="leaderboard">
+                <tr><td><span class="rank-icon">🥇</span> Ama Kupang</td><td>5000</td></tr>
+                <tr><td><span class="rank-icon">🥈</span> Rambu Sumba</td><td>4200</td></tr>
+                <tr><td><span class="rank-icon">🥉</span> Nyong Flores</td><td>3800</td></tr>
+            </table>
+
+            <button class="btn-start" style="width: 100%; margin-top: 15px;" onclick="resetGame()">MAIN LAGI</button>
+        </div>
+    </div>
+
+    <canvas id="fireworks"></canvas>
+    <button id="mute-btn" onclick="toggleMute()">🔊</button>
+
+    <script>
+        const quizData = [
+            { q: "Apa nama alat musik tradisional NTT dari daun lontar yang sudah diakui UNESCO?", a: ["Sasando", "Tifa", "Heo", "Prere"], c: 0 },
+            { q: "Danau Kelimutu yang memiliki tiga warna berbeda terletak di kabupaten...?", a: ["Sikka", "Ende", "Manggarai", "Kupang"], c: 1 },
+            { q: "Kuda poni tangguh asli NTT sering disebut sebagai kuda...?", a: ["Sandalwood", "Mustang", "Arab", "Thoroughbred"], c: 0 },
+            { q: "Rumah adat berbentuk kerucut di desa Wae Rebo disebut?", a: ["Musalaki", "Joglo", "Mbaru Niang", "Rumah Gadang"], c: 2 },
+            { q: "Taman Nasional Komodo terletak di kabupaten...?", a: ["Manggarai Barat", "Ende", "Sumba Barat", "Alor"], c: 0 }
+        ];
+
+        let currentIdx = 0, score = 0, lives = 3, combo = 0, isMuted = false, bgmLoop, fwInterval;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playNote(freq, type, duration, vol) {
+            if (isMuted) return;
+            const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playDrum() {
+            if (isMuted) return;
+            const osc = audioCtx.createOscillator(), g = audioCtx.createGain();
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            g.gain.setValueAtTime(0.06, audioCtx.currentTime);
+            osc.connect(g); g.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function startBGM() {
+            const melody = [523.25, 659.25, 783.99, 880, 783.99, 659.25, 587.33, 523.25];
+            let step = 0;
+            bgmLoop = setInterval(() => {
+                playNote(melody[step % melody.length], 'square', 0.2, 0.02);
+                if (step % 2 === 0) playDrum();
+                step++;
+            }, 214);
+        }
+
+        function startAdventure() {
+            document.getElementById('welcome-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('welcome-screen').style.display = 'none';
+                document.getElementById('game-ui').style.display = 'flex';
+                audioCtx.resume();
+                if(!bgmLoop) startBGM();
+                loadQuestion();
+            }, 800);
+        }
+
+        function loadQuestion() {
+            const data = quizData[currentIdx];
+            document.getElementById('q-tag').innerText = `CHALLENGE ${currentIdx + 1}`;
+            document.getElementById('question-text').innerText = data.q;
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            data.a.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(i, btn);
+                container.appendChild(btn);
+            });
+            updateMap();
+        }
+
+        function checkAnswer(choice, btn) {
+            if (btn.classList.contains('wrong') || btn.classList.contains('correct')) return;
+            
+            if (choice === quizData[currentIdx].c) {
+                btn.classList.add('correct');
+                score += 1000 + (combo * 500); combo++;
+                [523, 659, 783, 1046].forEach((f, i) => setTimeout(() => playNote(f, 'sine', 0.3, 0.1), i*80));
+                if(combo > 1) { 
+                    const p = document.getElementById('combo-popup');
+                    p.innerText = `COMBO X${combo}!`; p.classList.add('show-combo');
+                    setTimeout(() => p.classList.remove('show-combo'), 700);
+                }
+                document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+                setTimeout(() => {
+                    currentIdx++;
+                    if (currentIdx < quizData.length) loadQuestion();
+                    else endGame(true);
+                }, 1000);
+            } else {
+                btn.classList.add('wrong'); btn.disabled = true;
+                lives--; combo = 0; playNote(110, 'sawtooth', 0.5, 0.1);
+                updateHeartsDisplay();
+                if (lives <= 0) setTimeout(() => endGame(false), 600);
+            }
+            document.getElementById('score-display').innerText = `SCORE: ${score}`;
+        }
+
+        function updateHeartsDisplay() {
+            const hearts = document.querySelectorAll('.heart');
+            if (lives === 2) hearts[2].classList.add('lost');
+            if (lives === 1) hearts[1].classList.add('lost');
+            if (lives === 0) hearts[0].classList.add('lost');
+        }
+
+        function updateMap() {
+            const player = document.getElementById('player-icon');
+            const mapWidth = document.querySelector('.adventure-map').offsetWidth - 80;
+            player.style.left = (40 + (mapWidth / (quizData.length - 1)) * currentIdx) + 'px';
+            document.querySelectorAll('.waypoint').forEach((wp, i) => { if(i <= currentIdx) wp.classList.add('active'); });
+        }
+
+        function endGame(win) {
+            document.getElementById('result-screen').style.display = 'flex';
+            document.getElementById('final-score').innerText = score;
+            if (win) {
+                document.getElementById('result-title').innerText = "MISSION CLEAR!";
+                document.getElementById('result-title').style.color = "var(--neon-blue)";
+                startFireworksEffect();
+            } else {
+                document.getElementById('result-title').innerText = "GAME OVER";
+                document.getElementById('result-title').style.color = "var(--neon-red)";
+                document.getElementById('result-desc').innerText = "Perahu Anda karam di tengah samudra...";
+            }
+        }
+
+        function resetGame() {
+            clearInterval(fwInterval);
+            const canvas = document.getElementById('fireworks');
+            canvas.getContext('2d').clearRect(0,0,canvas.width, canvas.height);
+            currentIdx = 0; score = 0; lives = 3; combo = 0;
+            document.getElementById('score-display').innerText = "SCORE: 0";
+            document.querySelectorAll('.heart').forEach(h => h.classList.remove('lost'));
+            document.querySelectorAll('.waypoint').forEach(w => w.classList.remove('active'));
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('game-ui').style.display = 'none';
+            document.getElementById('welcome-screen').style.display = 'flex';
+            document.getElementById('welcome-screen').style.opacity = '1';
+        }
+
+        function toggleMute() { isMuted = !isMuted; document.getElementById('mute-btn').innerText = isMuted ? '🔇' : '🔊'; }
+
+        function startFireworksEffect() {
+            const canvas = document.getElementById('fireworks'), ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            let parts = [];
+            fwInterval = setInterval(() => {
+                const x = Math.random() * canvas.width, y = Math.random() * (canvas.height/2), color = `hsl(${Math.random()*360},100%,60%)`;
+                for(let i=0; i<20; i++) parts.push({x, y, vx:Math.cos(i)*Math.random()*5, vy:Math.sin(i)*Math.random()*5, l:1, c:color});
+                playNote(500 + Math.random()*500, 'sine', 0.1, 0.02);
+            }, 450);
+            function ani() {
+                ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(0,0,canvas.width, canvas.height);
+                parts.forEach((p,i) => {
+                    p.x+=p.vx; p.y+=p.vy; p.vy+=0.06; p.l-=0.02; ctx.fillStyle=p.c; ctx.globalAlpha=p.l;
+                    ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, 7); ctx.fill();
+                    if(p.l<=0) parts.splice(i,1);
+                });
+                if(document.getElementById('result-screen').style.display === 'flex') requestAnimationFrame(ani);
+            }
+            ani();
+        }
+    </script>
+</body>
+</html>
