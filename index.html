@@ -25,7 +25,6 @@
             height: 100vh;
             overflow: hidden;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             background: radial-gradient(circle at center, #131325 0%, #050508 100%);
@@ -116,16 +115,16 @@
             box-shadow: 0 0 20px var(--gold); font-size: 1.4rem;
         }
 
-        /* --- 3. CHALLENGE CARD --- */
+        /* --- 3. CHALLENGE CARD (Sleek Update) --- */
         .quiz-card {
             background: var(--glass-card);
             backdrop-filter: blur(20px);
             border: 2px solid var(--gold);
             border-radius: 30px;
-            padding: 30px;
+            padding: 30px; /* Padding lebih ramping */
             text-align: center; 
             width: 95%; 
-            max-width: 500px;
+            max-width: 500px; /* Max-width lebih ringkas untuk laptop */
             box-shadow: 0 0 35px rgba(255,215,0,0.22);
             position: relative; 
             z-index: 100;
@@ -137,15 +136,15 @@
         .option-btn {
             background: var(--btn-grad);
             border: 1px solid rgba(255, 255, 255, 0.12);
-            padding: 14px 20px;
+            padding: 14px 20px; /* Padding lebih ramping */
             border-radius: 15px; 
             color: white; 
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1rem; /* Ukuran font lebih proporsional */
             font-weight: 600; 
             transition: 0.3s; 
             width: 100%; 
-            margin-bottom: 10px;
+            margin-bottom: 10px; /* Jarak antar tombol lebih rapat */
         }
 
         .option-btn:hover:not(:disabled):not(.wrong) { 
@@ -178,7 +177,11 @@
 
         @keyframes scoreIn { from {opacity:0; transform:scale(0.8) translateY(30px)} to {opacity:1; transform:scale(1) translateY(0)} }
 
-        /* --- 5. AUDIO & CHATBOX STYLE --- */
+        .leaderboard { width: 100%; margin: 20px 0; border-collapse: collapse; }
+        .leaderboard td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; color: #ddd; }
+        .rank-icon { font-size: 1.2rem; margin-right: 10px; }
+
+        /* --- 5. AUDIO & CANVAS --- */
         #mute-btn {
             position: fixed; bottom: 20px; left: 20px; z-index: 10001;
             background: rgba(255,255,255,0.1); border: 1px solid var(--gold);
@@ -229,7 +232,3 @@
     </div>
 
     <!-- 5. RESULT SCOREBOARD -->
-    <div id="result-screen">
-        <div class="scoreboard">
-            <h2 class="title-gold" style="font-size: 2rem;">Petualangan Selesai</h2>
-            <p style="margin: 20px 0; font-size: 1.2rem;">Total Skor Petualanganmu:</p>
